@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Wait 7 days after a release is published before opening a PR for it,
+    # so any post-release issues are likely already known.
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
