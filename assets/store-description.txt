@@ -1,0 +1,28 @@
+DRIVE TRACKER
+
+A Garmin Connect IQ watch app that records car drives as a regular Garmin activity. Captures the GPS track, distance, moving time, break time, average and max speed, and lets you drop waypoints at fuel stops, photo spots and hotels. Each drive saves to Garmin Connect. Built for long-distance road trips.
+
+ON-WATCH CONTROLS (FENIX / EPIX / FORERUNNER / INSTINCT)
+  - START (top-right): start; press again to pause and open the finish menu.
+  - BACK (bottom-right): drop a waypoint while driving; resume from pause; exits when idle.
+  - UP (long-press): open Settings (About).
+
+A waypoint is recorded as a FIT lap split, so Garmin Connect shows each one as a pin on the map. The finish menu offers Resume / Save / Discard. Saving writes the activity to your watch's history, which syncs to Garmin Connect.
+
+SINGLE DASHBOARD
+
+Everything is shown on one screen, no paging:
+
+        DRIVING          status (green = driving, yellow = paused)
+        125.4 km         distance (hero)
+        2:34:12          moving time
+       break 0:18        break time (elapsed minus moving)
+   avg 48      max 112   average / max speed
+   WP 3        14:35     waypoint count | time of day
+
+Speeds and distance follow your watch's unit settings (km/h + km, or mph + mi). Current speed is intentionally not on the dashboard - the road, the car's dashboard and your eyes are better places to read it.
+
+SETTINGS / ABOUT
+Long-press UP to open the Settings menu. Today it has one entry, About, which shows the app version and a QR code linking to the source repository.
+
+Open source, MIT licensed: https://github.com/sv-garmin/drive-tracker

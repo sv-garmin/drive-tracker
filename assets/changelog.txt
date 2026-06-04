@@ -1,0 +1,34 @@
+DRIVE TRACKER — CHANGELOG
+
+All notable changes to this project.
+
+
+v1.0.0 — 2026-06-03 — initial release
+
+Added
+  - Records each drive as a Garmin Driving FIT activity with
+    continuous GPS, syncing to Garmin Connect with the full track,
+    distance, duration and speed stats.
+  - Manual waypoints on the BACK button — each press writes a FIT
+    lap, so Garmin Connect shows a split (and a pin on the map) at
+    every fuel stop, rest area or photo spot.
+  - Single dashboard with: status (DRIVING / PAUSED / READY),
+    distance, moving time, break time, average and max speed,
+    waypoint count, and time of day. No current speed (intentional —
+    eyes on the road).
+  - Finish menu (Resume / Save / Discard) opened by pressing START
+    while a drive is open.
+  - Settings / About screen (app version + QR to the source repo)
+    opened by long-pressing UP.
+  - Contextual BACK: drops a waypoint while running, resumes from
+    pause when paused, exits only when idle — protects against losing
+    data by accident.
+  - Distance and speed honor the watch's unit settings (km/h + km,
+    or mph + mi).
+  - Haptic feedback on start, pause, waypoint and save.
+  - Auto-save fallback if the app is force-closed while a session is
+    open.
+  - Steering-wheel launcher icon.
+  - Targets ~100 current Connect IQ devices (Fenix, Epix, Forerunner,
+    Venu, Vivoactive, Instinct, Marq, Approach, Edge, descent and
+    more) at minApiLevel 3.4.0.
