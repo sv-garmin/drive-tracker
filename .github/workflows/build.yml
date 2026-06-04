@@ -7,8 +7,11 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Default to least privilege. The release job below opts up to
+# `contents: write` for itself; the build job stays read-only so the
+# extra power isn't lying around on every push / PR run.
 permissions:
-  contents: write
+  contents: read
 
 env:
   # CI pulls the SDK + Devices + Fonts as one tarball from a release on
@@ -103,11 +106,23 @@ jobs:
           path: drive.iq
           if-no-files-found: error
 
-      # On a `v*` tag push, create a DRAFT release with the .iq attached.
-      # Drafts are mutable, so the file gets attached even when the repo
-      # has immutable releases turned on; you then publish it manually.
+  # On a `v*` tag push, create a DRAFT release with the .iq attached.
+  # Drafts are mutable, so the file gets attached even when the repo
+  # has immutable releases turned on; you then publish it manually.
+  release:
+    name: Draft release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        with:
+          name: drive-iq
+
       - name: Create draft release with .iq attached
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
         with:
           draft: true
