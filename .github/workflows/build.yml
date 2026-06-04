@@ -1,0 +1,130 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+# Default to least privilege. The release job below opts up to
+# `contents: write` for itself; the build job stays read-only so the
+# extra power isn't lying around on every push / PR run.
+permissions:
+  contents: read
+
+env:
+  # CI pulls the SDK + Devices + Fonts as one tarball from a release on
+  # the private sv-garmin/toolbox repo. The Devices/Fonts data is
+  # auth-gated on Garmin's side, so mirroring it ourselves keeps Garmin
+  # credentials out of CI.
+  SDK_VERSION: '9.1.0'
+  SDK_BUILD: '2026-03-09-6a872a80b'
+  TOOLBOX_REPO: 'sv-garmin/toolbox'
+  TOOLBOX_TAG: 'sdk-9.1.0'
+  BUNDLE_NAME: 'connectiq-9.1.0-2026-03-09-6a872a80b-linux.tar.gz'
+
+jobs:
+  build:
+    name: Build .iq
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      # monkeyc is a Java tool; the Linux SDK doesn't bundle a JRE.
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Cache Connect IQ bundle
+        id: sdk-cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.Garmin
+          key: connectiq-bundle-${{ env.SDK_VERSION }}-${{ env.SDK_BUILD }}-linux
+
+      - name: Download Connect IQ bundle from toolbox
+        if: steps.sdk-cache.outputs.cache-hit != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.TOOLBOX_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::Missing secret TOOLBOX_TOKEN (fine-grained PAT with Contents:Read on ${TOOLBOX_REPO})"
+            exit 1
+          fi
+          mkdir -p "$HOME/.Garmin"
+          gh release download "$TOOLBOX_TAG" \
+            --repo "$TOOLBOX_REPO" \
+            --pattern "$BUNDLE_NAME" \
+            --output /tmp/bundle.tar.gz
+          tar -xzf /tmp/bundle.tar.gz -C "$HOME/.Garmin"
+          rm /tmp/bundle.tar.gz
+
+      - name: Add SDK to PATH
+        run: |
+          SDK_BIN="$HOME/.Garmin/ConnectIQ/Sdks/connectiq-sdk-lin-${SDK_VERSION}-${SDK_BUILD}/bin"
+          if [ ! -d "$SDK_BIN" ]; then
+            echo "::error::SDK bin not found at $SDK_BIN"
+            find "$HOME/.Garmin" -maxdepth 4 -type d -name bin
+            exit 1
+          fi
+          chmod +x "$SDK_BIN"/monkeyc "$SDK_BIN"/monkeydo 2>/dev/null || true
+          echo "$SDK_BIN" >> "$GITHUB_PATH"
+
+      - name: Restore developer key
+        env:
+          DEV_KEY_B64: ${{ secrets.GARMIN_DEV_KEY_BASE64 }}
+        run: |
+          if [ -z "$DEV_KEY_B64" ]; then
+            echo "::error::Missing secret GARMIN_DEV_KEY_BASE64"
+            exit 1
+          fi
+          printf '%s' "$DEV_KEY_B64" | base64 -d > developer_key
+          chmod 600 developer_key
+
+      - name: Build store .iq
+        run: monkeyc -e -o drive.iq -f drive/monkey.jungle -y developer_key -w
+
+      # .iq is a 7-zip archive of one or more .prg per declared product
+      # (some products expand to multiple SDK device variants). Verify it
+      # opens and that the .prg count is at least the number of declared
+      # products.
+      - name: Sanity-check the .iq
+        run: |
+          7z t drive.iq
+          products=$(grep -c '<iq:product' drive/manifest.xml)
+          prgs=$(7z l drive.iq | grep -Ec '\.prg$')
+          echo "Declared products: $products, .prg files inside .iq: $prgs"
+          [ "$prgs" -ge "$products" ]
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: drive-iq
+          path: drive.iq
+          if-no-files-found: error
+
+  # On a `v*` tag push, create a DRAFT release with the .iq attached.
+  # Drafts are mutable, so the file gets attached even when the repo
+  # has immutable releases turned on; you then publish it manually.
+  release:
+    name: Draft release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        with:
+          name: drive-iq
+
+      - name: Create draft release with .iq attached
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
+        with:
+          draft: true
+          files: drive.iq
+          generate_release_notes: true
