@@ -5,9 +5,11 @@ activity. Tracks **distance, moving time, break time, average and max speed**,
 captures the **GPS track**, and lets you drop **waypoints** (lap markers) at
 fuel stops, photo spots and hotels. Each drive saves to **Garmin Connect**.
 
-Built for long-distance road trips on the **Fenix 6s**.
+Built for long-distance road trips. Runs on most current Garmin watches —
+Fenix, Epix, Forerunner, Venu, Vivoactive, Instinct, Marq, Approach and Edge
+— see `drive/manifest.xml` for the full list.
 
-## On-watch controls (Fenix 6s)
+## On-watch controls (Fenix / Epix / Forerunner / Instinct)
 
 | Button                | Action                                                  |
 |-----------------------|---------------------------------------------------------|

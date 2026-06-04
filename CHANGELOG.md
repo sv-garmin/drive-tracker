@@ -35,3 +35,6 @@ Initial release.
 - `build.sh`, `run.sh`, `install.sh` for one-step build / simulator / sideload.
 - GitHub Actions CI builds the store `.iq` on every push/PR; on a `v*` tag
   push it drafts a release with `.iq` attached.
+- Targets ~100 current Connect IQ devices (Fenix, Epix, Forerunner, Venu,
+  Vivoactive, Instinct, Marq, Approach, Edge, descent and more) at
+  `minApiLevel="3.4.0"`.
