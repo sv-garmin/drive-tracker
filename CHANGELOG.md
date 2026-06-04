@@ -7,9 +7,9 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
-## [0.1.0] — 2026-06-03
+## [1.0.0] — 2026-06-03
 
-Initial scaffolding.
+Initial release.
 
 ### Added
 - Records each drive as a Garmin **Driving** FIT activity with continuous
