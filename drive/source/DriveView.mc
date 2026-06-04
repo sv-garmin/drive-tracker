@@ -68,10 +68,14 @@ class DriveView extends WatchUi.View {
         dc.setColor(labelColor, Graphics.COLOR_TRANSPARENT);
         drawCentered(dc, cx, h * 0.10, Graphics.FONT_TINY, label);
 
-        // Distance (hero)
+        // Distance (hero). FONT_NUMBER_* only carries digit glyphs, so the
+        // unit suffix and the "Press START" prompt are drawn with a text font.
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-        drawCentered(dc, cx, h * 0.27, Graphics.FONT_NUMBER_MEDIUM,
-            state == STATE_STOPPED ? "Press START" : formatDistance(info, statute));
+        if (state == STATE_STOPPED) {
+            drawCentered(dc, cx, h * 0.27, Graphics.FONT_MEDIUM, "Press START");
+        } else {
+            drawDistanceHero(dc, cx, h * 0.27, info, statute);
+        }
 
         // Moving time
         var movingMs = (info != null && info.timerTime != null) ? info.timerTime : 0;
@@ -114,16 +118,32 @@ class DriveView extends WatchUi.View {
         dc.drawText(x, y, font, text, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
-    // Distance comes back in meters; format as km (one decimal under 100, else integer)
-    // or as miles, with the unit appended.
-    private function formatDistance(info as Activity.Info?, statute as Boolean) as String {
+    // Distance is drawn as `<NN.N> <unit>` with the number in the big
+    // FONT_NUMBER_MEDIUM face (digits only) and the unit suffix in a
+    // small text font to its right. The pair is centered around cx.
+    private function drawDistanceHero(dc as Dc, cx as Number, y as Numeric, info as Activity.Info?, statute as Boolean) as Void {
         var meters = (info != null && info.elapsedDistance != null) ? info.elapsedDistance as Float : 0.0;
+        var value;
+        var unit;
         if (statute) {
             var miles = meters / 1609.344;
-            return (miles < 100.0 ? miles.format("%.1f") : miles.format("%.0f")) + " mi";
+            value = miles < 100.0 ? miles.format("%.1f") : miles.format("%.0f");
+            unit = "mi";
+        } else {
+            var km = meters / 1000.0;
+            value = km < 100.0 ? km.format("%.1f") : km.format("%.0f");
+            unit = "km";
         }
-        var km = meters / 1000.0;
-        return (km < 100.0 ? km.format("%.1f") : km.format("%.0f")) + " km";
+        var numFont = Graphics.FONT_NUMBER_MEDIUM;
+        var unitFont = Graphics.FONT_TINY;
+        var gap = 4;
+        var numW = dc.getTextWidthInPixels(value, numFont);
+        var unitW = dc.getTextWidthInPixels(unit, unitFont);
+        var startX = cx - (numW + gap + unitW) / 2;
+        dc.drawText(startX, y, numFont, value,
+            Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(startX + numW + gap, y, unitFont, unit,
+            Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
     // m/s -> km/h or mph, rounded to the nearest integer.
