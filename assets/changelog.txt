@@ -3,7 +3,7 @@ DRIVE TRACKER — CHANGELOG
 All notable changes to this project.
 
 
-v1.0.0 — 2026-06-03 — initial release
+v1.0.0 — 2026-07-28 — initial release
 
 Added
   - Records each drive as a Garmin Driving FIT activity with
