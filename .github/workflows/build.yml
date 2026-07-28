@@ -18,11 +18,11 @@ env:
   # the private sv-garmin/toolbox repo. The Devices/Fonts data is
   # auth-gated on Garmin's side, so mirroring it ourselves keeps Garmin
   # credentials out of CI.
-  SDK_VERSION: '9.1.0'
-  SDK_BUILD: '2026-03-09-6a872a80b'
+  SDK_VERSION: '9.2.0'
+  SDK_BUILD: '2026-06-09-92a1605b2'
   TOOLBOX_REPO: 'sv-garmin/toolbox'
-  TOOLBOX_TAG: 'sdk-9.1.0'
-  BUNDLE_NAME: 'connectiq-9.1.0-2026-03-09-6a872a80b-linux.tar.gz'
+  TOOLBOX_TAG: 'sdk-9.2.0'
+  BUNDLE_NAME: 'connectiq-9.2.0-2026-06-09-92a1605b2-linux.tar.gz'
 
 jobs:
   build:
