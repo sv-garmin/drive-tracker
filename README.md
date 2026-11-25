@@ -18,25 +18,29 @@ Fenix, Epix, Forerunner, Venu, Vivoactive, Instinct, Marq, Approach and Edge
 | UP (long-press)       | Open Settings (About)                                   |
 
 A waypoint is recorded as a FIT lap split — Garmin Connect shows each one as
-a pin on the map. The finish menu offers **Resume / Save / Discard**.
+a pin on the map. The finish menu offers **Resume / Save / Discard**. Screen
+taps on touch watches are ignored so accidental touches while driving don't
+start or pause a drive.
 
 ## Single dashboard
 
 Everything on one screen, no paging:
 
 ```
-        DRIVING          status (green = driving, yellow = paused)
+       ● DRIVING         GPS dot + status (green = driving, yellow = paused)
         125.4 km         distance (hero)
         2:34:12          moving time
        break 0:18        break time (elapsed minus moving)
    avg 48      max 112   average / max speed
-   WP 3        14:35     waypoint count | time of day
+    WP 3        14:35    waypoint count | time of day
 ```
 
 Speeds and distance follow your watch's unit settings (km/h + km or mph + mi).
+The dot beside the status is filled once GPS has a lock and hollow while
+acquiring.
 
-Current speed is intentionally **not** shown — the dashboard, your dashboard
-in the car, and your eyes on the road are all better places to read it.
+Current speed is intentionally **not** shown — the car's dashboard and your
+eyes on the road are better places to read it.
 
 ## Settings → About
 

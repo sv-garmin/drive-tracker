@@ -12,6 +12,7 @@ DEVICE="${1:-fenix6s}"
   -f "$ROOT/drive/monkey.jungle" \
   -y "$ROOT/developer_key" \
   -d "$DEVICE" \
+  -l 3 \
   -w
 
 echo "Built drive/bin/drive.prg for $DEVICE"

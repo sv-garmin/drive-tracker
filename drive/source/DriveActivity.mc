@@ -11,17 +11,23 @@ enum DriveState {
 }
 
 // Wraps an ActivityRecording.Session for a driving activity. GPS is
-// recorded continuously; each manual waypoint becomes a FIT lap so it
-// shows up as a split in Garmin Connect.
+// kept active while the app is open (including pre-start and pause) so
+// lock status is visible before departure and resume is instant; each
+// manual waypoint becomes a FIT lap so it shows up as a split in
+// Garmin Connect.
 class DriveActivity {
     private var _session as ActivityRecording.Session?;
     private var _state as DriveState;
     private var _waypoints as Number;
+    private var _gpsEnabled as Boolean;
+    private var _gpsAccuracy as Position.Quality;
 
     public function initialize() {
         _session = null;
         _state = STATE_STOPPED;
         _waypoints = 0;
+        _gpsEnabled = false;
+        _gpsAccuracy = Position.QUALITY_NOT_AVAILABLE;
     }
 
     public function getState() as DriveState {
@@ -36,6 +42,30 @@ class DriveActivity {
         return _state != STATE_STOPPED;
     }
 
+    public function getGpsAccuracy() as Position.Quality {
+        return _gpsAccuracy;
+    }
+
+    public function hasGpsFix() as Boolean {
+        return _gpsAccuracy == Position.QUALITY_USABLE
+            || _gpsAccuracy == Position.QUALITY_GOOD;
+    }
+
+    public function startGps() as Void {
+        if (!_gpsEnabled) {
+            Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, method(:onPosition));
+            _gpsEnabled = true;
+        }
+    }
+
+    public function stopGps() as Void {
+        if (_gpsEnabled) {
+            Position.enableLocationEvents(Position.LOCATION_DISABLE, method(:onPosition));
+            _gpsEnabled = false;
+        }
+        _gpsAccuracy = Position.QUALITY_NOT_AVAILABLE;
+    }
+
     public function startOrResume() as Void {
         var s = _session;
         if (s == null) {
@@ -47,8 +77,7 @@ class DriveActivity {
             _session = s;
             _waypoints = 0;
         }
-        // Continuous GPS while recording.
-        Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, method(:onPosition));
+        startGps();
         if (!s.isRecording()) {
             s.start();
         }
@@ -61,7 +90,6 @@ class DriveActivity {
         if (s != null && s.isRecording()) {
             s.stop();
         }
-        Position.enableLocationEvents(Position.LOCATION_DISABLE, method(:onPosition));
         _state = STATE_PAUSED;
         vibe(50, 100);
     }
@@ -88,8 +116,9 @@ class DriveActivity {
             }
             s.save();
         }
-        Position.enableLocationEvents(Position.LOCATION_DISABLE, method(:onPosition));
+        stopGps();
         _session = null;
+        _waypoints = 0;
         _state = STATE_STOPPED;
         vibe(100, 400);
     }
@@ -102,15 +131,16 @@ class DriveActivity {
             }
             s.discard();
         }
-        Position.enableLocationEvents(Position.LOCATION_DISABLE, method(:onPosition));
+        stopGps();
         _session = null;
+        _waypoints = 0;
         _state = STATE_STOPPED;
     }
 
-    // Position callback. Required by enableLocationEvents but we don't
-    // need to do anything — ActivityRecording pulls fixes into the FIT
-    // record stream automatically while a session is recording.
+    // Position callback: tracks current GPS fix quality for the dashboard
+    // indicator while ActivityRecording pulls fixes into the FIT stream.
     public function onPosition(info as Position.Info) as Void {
+        _gpsAccuracy = info.accuracy;
     }
 
     private function vibe(intensity as Number, durationMs as Number) as Void {

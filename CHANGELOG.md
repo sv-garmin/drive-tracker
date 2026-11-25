@@ -7,7 +7,36 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
-## [1.0.0] — 2026-06-03
+## [1.1.0] — 2026-11-24
+
+### Added
+- Support for new Connect IQ SDK `9.3.0` devices: Fenix 9 / 9 Pro / 9 Pro
+  Solar, Enduro 4, MARQ Gen 3, Approach S72, Edge 1060, and Edge Explore 3 /
+  3 Plus.
+- GPS lock indicator dot beside the dashboard status (filled when locked,
+  hollow while acquiring); GPS starts on launch and stays warm across pauses.
+- Dedicated monochrome / subscreen layout for Instinct 2/3 Solar/E and
+  Descent G1, plus integer-scaled QR rendering on high-DPI displays.
+- Monkey C `(:test)` unit tests (`DriveTests.mc`) and strict `-l 3` type
+  checking in `build.sh` and CI.
+
+### Changed
+- Ignore screen taps (`onTap`) on touch watches so accidental touches while
+  driving don't start or pause a session.
+- Move UI and menu strings into `strings.xml` and cache loaded resources in
+  `DriveView` and `AboutView`.
+- Inset the bottom dashboard row (`WP` / clock) slightly for better bezel
+  clearance on round displays.
+- Remove unused `FitContributor` permission from `drive/manifest.xml`.
+- CI bumped to Connect IQ SDK `9.3.0` (`2026-10-20-95888f262`).
+
+### Fixed
+- Prevent stale `Activity.Info` metrics from appearing on the idle `READY`
+  screen before starting a drive.
+- Reset waypoint count on `save()` and `discard()`.
+- Fix `v1.0.0` release date to `2026-07-28`.
+
+## [1.0.0] — 2026-07-28
 
 Initial release.
 
@@ -36,5 +65,5 @@ Initial release.
 - GitHub Actions CI builds the store `.iq` on every push/PR; on a `v*` tag
   push it drafts a release with `.iq` attached.
 - Targets ~100 current Connect IQ devices (Fenix, Epix, Forerunner, Venu,
-  Vivoactive, Instinct, Marq, Approach, Edge, descent and more) at
+  Vivoactive, Instinct, Marq, Approach, Edge, Descent and more) at
   `minApiLevel="3.4.0"`.

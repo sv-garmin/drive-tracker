@@ -1,16 +1,23 @@
 import Toybox.Lang;
 import Toybox.WatchUi;
 
-// Button handling (Fenix 6s layout):
+// Button handling (Fenix / Epix / Forerunner / Instinct layout):
 //   START (top-right)    -> start; while active, pause and open the finish menu
 //   BACK  (bottom-right) -> drop a waypoint while recording; resume from pause; exit when idle
 //   UP    (long-press)   -> open Settings (always)
+//   Screen tap           -> ignored so accidental touches while driving don't pause/start
 class DriveDelegate extends WatchUi.BehaviorDelegate {
     private var _activity as DriveActivity;
 
     public function initialize(activity as DriveActivity) {
         BehaviorDelegate.initialize();
         _activity = activity;
+    }
+
+    // Swallow screen taps so they don't fall through to onSelect() on
+    // touchscreen watches while driving.
+    public function onTap(clickEvent as WatchUi.ClickEvent) as Boolean {
+        return true;
     }
 
     public function onSelect() as Boolean {
@@ -48,10 +55,16 @@ class DriveDelegate extends WatchUi.BehaviorDelegate {
         if (_activity.getState() == STATE_RUNNING) {
             _activity.pause();
         }
-        var menu = new WatchUi.Menu2({ :title => "Drive" });
-        menu.addItem(new WatchUi.MenuItem("Resume", null, :resume, null));
-        menu.addItem(new WatchUi.MenuItem("Save", "to Garmin Connect", :save, null));
-        menu.addItem(new WatchUi.MenuItem("Discard", null, :discard, null));
+        var title = WatchUi.loadResource(Rez.Strings.DriveTitle) as String;
+        var resumeLabel = WatchUi.loadResource(Rez.Strings.MenuResume) as String;
+        var saveLabel = WatchUi.loadResource(Rez.Strings.MenuSave) as String;
+        var saveSub = WatchUi.loadResource(Rez.Strings.MenuSaveSub) as String;
+        var discardLabel = WatchUi.loadResource(Rez.Strings.MenuDiscard) as String;
+
+        var menu = new WatchUi.Menu2({ :title => title });
+        menu.addItem(new WatchUi.MenuItem(resumeLabel, null, :resume, null));
+        menu.addItem(new WatchUi.MenuItem(saveLabel, saveSub, :save, null));
+        menu.addItem(new WatchUi.MenuItem(discardLabel, null, :discard, null));
         WatchUi.pushView(menu, new StopMenuDelegate(_activity), WatchUi.SLIDE_UP);
     }
 

@@ -18,11 +18,11 @@ env:
   # the private sv-garmin/toolbox repo. The Devices/Fonts data is
   # auth-gated on Garmin's side, so mirroring it ourselves keeps Garmin
   # credentials out of CI.
-  SDK_VERSION: '9.2.0'
-  SDK_BUILD: '2026-06-09-92a1605b2'
+  SDK_VERSION: '9.3.0'
+  SDK_BUILD: '2026-10-20-95888f262'
   TOOLBOX_REPO: 'sv-garmin/toolbox'
-  TOOLBOX_TAG: 'sdk-9.2.0'
-  BUNDLE_NAME: 'connectiq-9.2.0-2026-06-09-92a1605b2-linux.tar.gz'
+  TOOLBOX_TAG: 'sdk-9.3.0'
+  BUNDLE_NAME: 'connectiq-9.3.0-2026-10-20-95888f262-linux.tar.gz'
 
 jobs:
   build:
@@ -85,7 +85,10 @@ jobs:
           chmod 600 developer_key
 
       - name: Build store .iq
-        run: monkeyc -e -o drive.iq -f drive/monkey.jungle -y developer_key -w
+        run: monkeyc -e -o drive.iq -f drive/monkey.jungle -y developer_key -l 3 -w
+
+      - name: Compile unit tests
+        run: monkeyc -t -o drive/bin/drive-test.prg -f drive/monkey.jungle -y developer_key -d fenix6s -l 3 -w
 
       # .iq is a 7-zip archive of one or more .prg per declared product
       # (some products expand to multiple SDK device variants). Verify it

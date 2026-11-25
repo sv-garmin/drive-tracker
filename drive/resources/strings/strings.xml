@@ -1,7 +1,21 @@
 <strings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
     <string id="AppName">Drive Tracker</string>
     <!-- Bump this in lock-step with the manifest's version attribute. -->
-    <string id="AppVersion">1.0.0</string>
+    <string id="AppVersion">1.1.0</string>
     <string id="SettingsTitle">Settings</string>
     <string id="AboutItem">About</string>
+    <string id="StatusDriving">DRIVING</string>
+    <string id="StatusPaused">PAUSED</string>
+    <string id="StatusReady">READY</string>
+    <string id="PressStart">Press START</string>
+    <string id="BreakLabel">break</string>
+    <string id="AvgLabel">avg</string>
+    <string id="MaxLabel">max</string>
+    <string id="WpLabel">WP</string>
+    <string id="DriveTitle">Drive</string>
+    <string id="MenuResume">Resume</string>
+    <string id="MenuSave">Save</string>
+    <string id="MenuSaveSub">to Garmin Connect</string>
+    <string id="MenuDiscard">Discard</string>
+    <string id="ScanForSource">scan for source</string>
 </strings>
