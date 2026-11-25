@@ -10,6 +10,9 @@ All notable changes to this project are documented here. The format follows
 ## [1.1.0] — 2026-11-24
 
 ### Added
+- Support for new Connect IQ SDK `9.3.0` devices: Fenix 9 / 9 Pro / 9 Pro
+  Solar, Enduro 4, MARQ Gen 3, Approach S72, Edge 1060, and Edge Explore 3 /
+  3 Plus.
 - GPS lock indicator dot beside the dashboard status (filled when locked,
   hollow while acquiring); GPS starts on launch and stays warm across pauses.
 - Dedicated monochrome / subscreen layout for Instinct 2/3 Solar/E and

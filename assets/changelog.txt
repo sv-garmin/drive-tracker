@@ -6,6 +6,9 @@ All notable changes to this project.
 v1.1.0 — 2026-11-24
 
 Added
+  - Support for new Garmin devices: Fenix 9 / 9 Pro / 9 Pro Solar,
+    Enduro 4, MARQ Gen 3, Approach S72, Edge 1060, and Edge Explore 3 /
+    3 Plus.
   - GPS lock indicator dot beside the dashboard status (filled when
     locked, hollow while acquiring); GPS starts on launch and stays
     warm across pauses.
