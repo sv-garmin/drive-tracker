@@ -13,16 +13,22 @@ class DriveApp extends Application.AppBase {
     }
 
     // If the app is exited while a session is still open (e.g. long-press
-    // back, low battery), save it so the drive isn't lost.
+    // back, low battery), save it so the drive isn't lost. Always disable
+    // GPS updates when exiting.
     public function onStop(state as Dictionary?) as Void {
         var a = _activity;
-        if (a != null && a.isActive()) {
-            a.save();
+        if (a != null) {
+            if (a.isActive()) {
+                a.save();
+            } else {
+                a.stopGps();
+            }
         }
     }
 
     public function getInitialView() as [Views] or [Views, InputDelegates] {
         var a = new DriveActivity();
+        a.startGps();
         _activity = a;
         return [ new DriveView(a), new DriveDelegate(a) ];
     }

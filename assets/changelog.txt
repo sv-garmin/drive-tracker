@@ -3,6 +3,29 @@ DRIVE TRACKER — CHANGELOG
 All notable changes to this project.
 
 
+v1.1.0 — 2026-11-24
+
+Added
+  - GPS lock indicator dot beside the dashboard status (filled when
+    locked, hollow while acquiring); GPS starts on launch and stays
+    warm across pauses.
+  - Dedicated monochrome and subscreen layout for Instinct 2/3 Solar/E
+    and Descent G1, plus crisp integer-scaled QR rendering on high-DPI
+    AMOLED displays.
+
+Changed
+  - Ignore screen taps on touch watches so accidental touches while
+    driving don't start or pause a drive.
+  - Inset the bottom dashboard row (WP / clock) for better clearance
+    around round watch bezels.
+  - Removed the unused FitContributor permission.
+
+Fixed
+  - Prevented stale metrics from a previous activity from appearing on
+    the idle READY screen before starting a drive.
+  - Reset waypoint count cleanly on save and discard.
+
+
 v1.0.0 — 2026-07-28 — initial release
 
 Added
@@ -30,5 +53,5 @@ Added
     open.
   - Steering-wheel launcher icon.
   - Targets ~100 current Connect IQ devices (Fenix, Epix, Forerunner,
-    Venu, Vivoactive, Instinct, Marq, Approach, Edge, descent and
+    Venu, Vivoactive, Instinct, Marq, Approach, Edge, Descent and
     more) at minApiLevel 3.4.0.

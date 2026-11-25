@@ -58,20 +58,21 @@ watch face).
 ```
 drive/
   manifest.xml                  app id, type, targets, permissions
-                                  (Positioning, Fit, FitContributor)
+                                  (Positioning, Fit)
   monkey.jungle                 build config
   source/
     DriveApp.mc                 AppBase; wires up the activity + saves on exit
-    DriveView.mc                main dashboard (custom drawn, 1s refresh)
-    DriveDelegate.mc            button handling
+    DriveView.mc                main dashboard (custom drawn, 1s refresh) + DriveFormat
+    DriveDelegate.mc            button handling (ignores screen taps)
     StopMenuDelegate.mc         finish menu (Resume / Save / Discard)
     SettingsMenuDelegate.mc     Settings menu (long-press UP)
-    AboutView.mc                About screen — app name + version
+    AboutView.mc                About screen — app name, version, and source QR
     DriveActivity.mc            ActivityRecording wrapper:
-                                  state machine + waypoints (as FIT laps)
+                                  state machine, GPS status + waypoints (FIT laps)
+    DriveTests.mc               Monkey C (:test) unit tests
   resources/
-    drawables/                  launcher icon (steering wheel)
-    strings/                    AppName, AppVersion, menu labels
+    drawables/                  launcher icon (steering wheel) + source QR
+    strings/                    AppName, AppVersion, UI & menu labels
 ```
 
 ## CI
@@ -95,12 +96,13 @@ that tarball and extracts it to `~/.Garmin/ConnectIQ/`. Required repo secrets:
 
 ## Cutting a release
 
-1. Bump the version in **three** places (until Connect IQ exposes the
+1. Bump the version in **four** places (until Connect IQ exposes the
    manifest version at runtime):
    - `drive/manifest.xml` — the `version` attribute on `<iq:application>`
    - `drive/resources/strings/strings.xml` — the `AppVersion` string
      (displayed by the About screen)
    - `CHANGELOG.md` — promote the `[Unreleased]` section to the new version
+   - `assets/changelog.txt` — add the matching store changelog entry
 2. Commit + push.
 3. Create a signed tag and push it:
    ```sh
